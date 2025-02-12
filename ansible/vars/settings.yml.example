@@ -5,6 +5,7 @@ allowed_hosts: "*"
 contact_email: "danjac2018@gmail.com"
 csp_script_whitelist: "*.account.google.com,*.googleapis.com,*.cloudflareinsights.com"
 docker_image: ghcr.io/danjac/radiofeed-app:main
+domain_name: "radiofeed.app"
 mailgun_api_key: ""
 mailgun_api_url: "https://api.eu.mailgun.net/v3"
 mailgun_sender_domain: "mg.radiofeed.app"

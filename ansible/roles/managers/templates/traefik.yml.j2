@@ -1,0 +1,24 @@
+tls:
+  certificates:
+    - certFile: "/etc/traefik/certs/cloudflare.pem"
+      keyFile: "/etc/traefik/certs/cloudflare.key"
+
+http:
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+
+  routers:
+    {{ stack_name }}:
+      rule: "Host(`{{ domain_name }}`)"
+      service: {{ stack_name }}
+      entryPoints:
+        - websecure
+      tls: {}
+
+  services:
+    {{ stack_name }}:
+      loadBalancer:
+        servers:
+          - url: "http://django:8000"

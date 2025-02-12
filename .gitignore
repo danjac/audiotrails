@@ -3,7 +3,9 @@
 *.bak
 *.db
 *.egg
+*.key
 *.lock
+*.pem
 *.pot
 *.pyc
 *.sqlite3

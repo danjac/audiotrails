@@ -2,15 +2,29 @@
   vars:
       database_ip: "{{ hostvars[groups['databases'][0]].private_ip }}"
   ansible.builtin.template:
-    src: templates/stack.yml.j2
-    dest: "{{ project_dir }}/stack.yml"
-    mode: "u+r"
+      src: templates/stack.yml.j2
+      dest: "{{ project_dir }}/stack.yml"
+      mode: "u+r"
+
+- name: Copy Traefik configuration file
+  ansible.builtin.template:
+      src: templates/traefik.yml.j2
+      dest: "{{ project_dir }}/traefik.yml"
+      mode: "u+r"
+
+- name: Copy Cloudflare certs
+  ansible.builtin.copy:
+      src: "{{ item }}"
+      dest: "{{ project_dir }}/certs/"
+  with_fileglob:
+      - "certs/cloudflare.pem"
+      - "certs/cloudflare.key"
 
 - name: Create deploy script
   ansible.builtin.template:
-    src: templates/deploy_stack.sh.j2
-    dest: "/home/{{ user }}/deploy_stack.sh"
-    mode: "u+x"
+      src: templates/deploy_stack.sh.j2
+      dest: "/home/{{ user }}/deploy_stack.sh"
+      mode: "u+x"
 
 - name: Initialize Docker swarm
   community.docker.docker_swarm:
@@ -20,4 +34,4 @@
 
 - name: Deploy stack
   ansible.builtin.shell:
-    cmd: ./deploy_stack.sh
+      cmd: ./deploy_stack.sh

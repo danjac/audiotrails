@@ -1,5 +1,37 @@
 services:
+  traefik:
+    image: traefik:v3.3.3
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.file.filename=/etc/traefik/dynamic.yml"
+    ports:
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/etc/traefik/dynamic.yml:ro"
+      - "./certs:/etc/traefik/certs:ro"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    logging:
+      options:
+        max-file: "3"
+        max-size: 10k
+    networks:
+      - web
+
   django:
+    deploy:
+      replicas: {{ groups['workers']|length }}
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.{{ stack_name }}.rule=Host(`{{ domain_name }}`)"
+        - "traefik.http.routers.{{ stack_name }}.entrypoints=websecure"
+        - "traefik.http.routers.{{ stack_name }}.tls=true"
     image: {{ docker_image }}
     command: ./entrypoint.sh
     environment:
@@ -22,12 +54,10 @@ services:
       options:
         max-file: "3"
         max-size: 10k
-    deploy:
-      replicas: {{ groups['workers']|length }}
-      placement:
-        constraints:
-          - node.role != manager
-    ports:
-      - published: 8000
-        target: 8000
-        mode: host
+    networks:
+      - web
+
+networks:
+  web:
+    driver: overlay
+    attachable: true
