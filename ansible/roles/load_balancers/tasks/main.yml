@@ -29,7 +29,7 @@
 - name: Initialize Docker swarm
   community.docker.docker_swarm:
       state: present
-      advertise_addr: "{{ hostvars[groups['managers'][0]].private_ip  }}"
+      advertise_addr: "{{ hostvars[groups['load_balancers'][0]].private_ip  }}"
   register: swarm
 
 - name: Deploy stack

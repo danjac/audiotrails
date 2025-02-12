@@ -17,21 +17,21 @@
   roles:
       - databases
 
-- name: Set up swarm managers and cronjobs
-  hosts: managers
+- name: Set up load balancers and cronjobs
+  hosts: load_balancers
   remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
       - ./vars/settings.yml
   roles:
-      - managers
+      - load_balancers
       - cron_schedulers
 
-- name: Set up swarm workers
-  hosts: workers
+- name: Set up app servers
+  hosts: app_servers
   remote_user: "{{ user }}"
   gather_facts: false
   vars_files:
       - ./vars/settings.yml
   roles:
-      - workers
+      - app_servers

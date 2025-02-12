@@ -26,7 +26,7 @@ services:
 
   django:
     deploy:
-      replicas: {{ groups['workers']|length }}
+      replicas: {{ groups['app_servers']|length }}
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.{{ stack_name }}.rule=Host(`{{ domain_name }}`)"

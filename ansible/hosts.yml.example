@@ -3,12 +3,12 @@ databases:
     101.102.103.101:
       private_ip: 10.0.0.1
 
-managers:
+load_balancers:
   hosts:
     101.102.103.102:
       private_ip: 10.0.0.2
 
-workers:
+app_servers:
   hosts:
     101.102.103.103:
     101.102.103.104:
