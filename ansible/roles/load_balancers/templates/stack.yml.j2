@@ -32,6 +32,9 @@ services:
         - "traefik.http.routers.{{ stack_name }}.rule=Host(`{{ domain_name }}`)"
         - "traefik.http.routers.{{ stack_name }}.entrypoints=websecure"
         - "traefik.http.routers.{{ stack_name }}.tls=true"
+      placement:
+        constraints:
+          - node.role != manager
     image: {{ docker_image }}
     command: ./entrypoint.sh
     environment:
