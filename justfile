@@ -18,9 +18,13 @@ db_volume := "radiofeed-app_pg_data"
 # Run all checks and tests
 @check: precommitall typecheck templatecheck test
 
-# Deploy application using Github Actions
+# Run Gihub workflow
+@ghr workflow *ARGS:
+    gh workflow run {{ workflow }}.yml {{ ARGS }}
+
+# Deploy
 @deploy:
-    gh workflow run deploy.yml
+    just ghr deploy_k3s
 
 # Install all Python dependencies
 @pyinstall:
