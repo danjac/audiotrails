@@ -1,0 +1,27 @@
+name: radiofeed:deploy_k3s
+run-name: ${{ github.actor }} is deploying to production servers
+on:
+    workflow_dispatch:
+        branches:
+            - main
+jobs:
+    run_checks:
+        uses: ./.github/workflows/checks.yml
+    build_docker:
+        needs: run_checks
+        uses: ./.github/workflows/docker.yml
+    deploy_to_k8s:
+        runs-on: ubuntu-latest
+        needs: build_docker
+        env:
+            REGISTRY: ghcr.io
+            IMAGE_NAME: ${{ github.repository }}
+        steps:
+            - name: Deploy to Kubernetes
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.DEPLOY_IP }}
+                  username: ${{ secrets.DEPLOY_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  script: |
+                    TAG=${{ github.sha }} ./deploy.sh
